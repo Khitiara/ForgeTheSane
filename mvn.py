@@ -9,10 +9,12 @@ def get_libraries(install_profile, root):
         artifact = lib_prof['downloads']['artifact']
         path = os.path.join(root, artifact['path'])
         libs[lib_prof['name']] = path
-        if artifact['url']:
+        url = artifact['url']
+        if url:
             os.makedirs(os.path.dirname(path), exist_ok=True)
             if not os.path.exists(path):
+                print(url)
                 with open(path, 'wb') as f:
-                    with req.urlopen(artifact['url']) as data:
+                    with req.urlopen(url) as data:
                         f.write(data.read())
     return libs
