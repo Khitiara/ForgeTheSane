@@ -8,7 +8,8 @@ def get_libraries(install_profile):
         artifact = lib_prof['downloads']['artifact']
         path = artifact['path']
         libs[lib_prof['name']] = path
-        with open(path, 'wb') as f:
-            data = req.urlopen(artifact['url'])
-            f.write(data.read())
-    libs
+        if artifact['url']:
+            with open(path, 'wb') as f:
+                with req.urlopen(artifact['url']) as data:
+                    f.write(data.read())
+    return libs
