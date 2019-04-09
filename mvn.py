@@ -14,7 +14,7 @@ mvn_pattern = re.compile(
         \]
     """, re.X)
 
-def get_libraries(install_profile, root):
+def get_libraries(install_profile, archive, root):
     libs_prof = install_profile['libraries']
     libs = {}
     for lib_prof in libs_prof:
@@ -22,16 +22,25 @@ def get_libraries(install_profile, root):
         path = os.path.join(root, artifact['path'])
         libs[lib_prof['name']] = path
         url = artifact['url']
-        if url:
-            os.makedirs(os.path.dirname(path), exist_ok=True)
-            if not os.path.exists(path):
-                print(url)
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        if not os.path.exists(path):
+            if url:
+                print('Download', url)
                 with open(path, 'wb') as f:
                     with req.urlopen(url) as data:
                         f.write(data.read())
+            else:
+                # local file inside the archive
+                # does not use ZipFile.extract because the path is
+                # structurally different
+                entry_path = os.path.join('maven', artifact['path'])
+                print('Extract', entry_path)
+                with archive.open(entry_path) as entry:
+                    with open(path, 'wb') as f:
+                        f.write(entry.read())
     return libs
 
-def get_data(install_profile, root):
+def get_data(install_profile, archive, root):
     data_prof = install_profile['data']
     data = {}
     for datum_name in data_prof:
@@ -46,6 +55,12 @@ def get_data(install_profile, root):
         else:
             # literal path, extract to new location
             data[datum_name] = os.path.join(root, path_spec[1:])
+            os.makedirs(os.path.dirname(data[datum_name]), exist_ok=True)
+            if not os.path.exists(data[datum_name]):
+                print('Extract', path_spec[1:])
+                with archive.open(path_spec[1:]) as entry:
+                    with open(data[datum_name], 'wb') as f:
+                        f.write(entry.read())
     return data
 
 def maven_to_path(path_spec):
