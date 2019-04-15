@@ -15,6 +15,11 @@ mvn_pattern = re.compile(
     """, re.X)
 
 def get_libraries(install_profile, archive, root):
+    """Downloads or extracts libraries specified in the install profile to the
+    location given by `root`.
+
+    Return - a dict of { <library-name>: <path-to-library> }.
+    """
     libs_prof = install_profile['libraries']
     libs = {}
     for lib_prof in libs_prof:
@@ -41,6 +46,14 @@ def get_libraries(install_profile, archive, root):
     return libs
 
 def get_data(install_profile, archive, root):
+    """Transforms client data specs in the install profile.
+
+    Maven specifiers are transformed into paths starting from `root`.
+    Literal paths are extracted from `archive` and placed relative to `root`.
+    SHA hashes are stripped, since we don't need them.
+
+    Return - a dict of { <data-name>: <path-to-data> }.
+    """
     data_prof = install_profile['data']
     data = {}
     for datum_name in data_prof:
