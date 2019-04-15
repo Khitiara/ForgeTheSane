@@ -21,3 +21,4 @@ def download_minecraft(install_profile, base):
         with open(path, 'wb') as f:
             with req.urlopen(url) as data:
                 f.write(data.read())
+    return path
