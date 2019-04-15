@@ -8,7 +8,7 @@ mvn_pattern = re.compile(
         \[
         (?P<group>[^:]+):
         (?P<artifact>[^:]+):
-        (?P<version>[^:]+)
+        (?P<version>[^:@]+)
         (?::(?P<classifier>\w+))?
         (?:@(?P<ext>\w+))?
         \]
