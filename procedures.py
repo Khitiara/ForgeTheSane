@@ -13,15 +13,12 @@ def run_procs(procs):
             main_class,
             *proc['args']
         ]
-        print(proc['jar'])
+        print('Run', proc['jar'])
         complete = subprocess.run(
             args,
             encoding='UTF-8',
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE
+            stdout=subprocess.DEVNULL
         )
-        if complete.stderr:
-            print(complete.stderr)
         if complete.returncode != 0:
             print('Process completed with exit code', complete.returncode)
 
@@ -33,5 +30,6 @@ def get_main_class(jar_name):
             for line in manifest:
                 str_line = line.decode('UTF-8')
                 if str_line.startswith(main_class_attr):
+                    # assumes the main class attribute is < 72 bytes long
                     return str_line[len(main_class_attr):].strip()
     raise RuntimeError('Main class not found in manifest')
