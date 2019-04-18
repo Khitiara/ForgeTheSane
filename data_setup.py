@@ -2,18 +2,22 @@ import os
 import mvn
 import mcdl
 import json
+import os.path
 from zipfile import ZipFile
 
 
 def data_setup(installer_jar):
     with ZipFile(installer_jar, 'r') as forge_archive:
         install_profile = get_install_profile(forge_archive)
-        base = 'data/' + install_profile['version']
+        base = os.path.join('data', install_profile['version'])
         os.makedirs(base, exist_ok=True)
         mcpath = mcdl.download_minecraft(install_profile, base)
         libs = mvn.get_libraries(install_profile, forge_archive, base)
         data = mvn.get_data(install_profile, forge_archive, base)
         data['MINECRAFT_JAR'] = mcpath
+        # put output jar in the base directory, so we don't need to
+        # dig it out of several nested directories
+        data['PATCHED'] = os.path.join(base, os.path.split(data['PATCHED'])[1])
         return parse_processors(install_profile, libs, data, base)
 
 def get_install_profile(archive):
