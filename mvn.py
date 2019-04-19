@@ -77,7 +77,7 @@ def get_data(install_profile, archive, root):
     return data
 
 def maven_to_path(path_spec):
-    match = mvn_pattern.search(path_spec)
+    match = mvn_pattern.search(path_spec).groupdict()
     return "{group}/{artifact}/{version}/{artifact}-{version}{d}{classifier}.{ext}".format(
             group=match['group'].replace('.', '/'),
             artifact=match['artifact'],
