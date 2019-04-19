@@ -5,7 +5,7 @@ import os.path
 
 def minecraft_download_url(install_profile):
     mc_ver = install_profile['minecraft']
-    mmc_meta_url = f"https://meta.multimc.org/v1/net.minecraft/{mc_ver}.json"
+    mmc_meta_url = "https://meta.multimc.org/v1/net.minecraft/" + mc_ver + ".json"
     r = req.Request(mmc_meta_url, headers={'User-Agent': "Magic Browser"})
     with req.urlopen(r) as url:
         data = json.loads(url.read().decode())
