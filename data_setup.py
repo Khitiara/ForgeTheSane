@@ -22,7 +22,8 @@ def data_setup(installer_jar):
 
 def get_install_profile(archive):
     with archive.open('install_profile.json') as prof:
-        return json.load(prof)
+        # fix for Python 3.5
+        return json.loads(prof.read().decode('UTF-8'))
 
 def parse_processors(install_profile, libraries, data, root):
     """Returns the list of processors to run from the install profile.
